@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        .table-responsive {
+            margin: 30px 0;
+        }
+        .table td, .table th {
+            border-right: 1px solid #dee2e6;
+            text-align: center;
+        }
+        .emptyCell {
+            background: #dee2e6;
+        }
+        h3 span {
+            color: green;
+        }
+        .createBtn {
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% if result %}
+        <div class="container-fluid">
+            <div class="row">
+                {% for divKey, division in result['divisions'] %}
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <h2>Division {{ divKey + 1 }}</h2>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Teams</th>
+                                    {% for team in result['teams'] %}
+                                        <th scope="col">{{ team }}</th>
+                                    {% endfor %}
+                                    <th scope="col">Score</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for key, data in division['data'] %}
+                                    <tr>
+                                        <td>{{ result['teams'][key - 1] }}</td>
+                                        {% for dataItem in data %}
+                                            {% if dataItem|length == 0 %}
+                                                <td class="emptyCell"></td>
+                                            {% else %}
+                                                <td>{{ dataItem[0] }} : {{ dataItem[1] }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <td>{{ division['scores'][key] }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="container">
+            <div class="table-responsive">
+                <h2>Итоги:</h2>
+                {% for table in result['playOff'] %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Match</th>
+                                <th scope="col">Score</th>
+                                <th scope="col">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for info in table %}
+                                <tr>
+                                    <td>{{ info['match'][0] }} -> {{ info['match'][1] }}</td>
+                                    <td>{{ info['score'][0] }} : {{ info['score'][1] }}</td>
+                                    <td>{{ info['winner'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+                <br>
+                <h3>Победитель: <span>{{ result['winner'] }}</span></h3>
+            </div>
+        </div>
+    {% endif %}
+    <a class = "createBtn btn btn-primary" href="/?process">{% if result %}Новые данные{% else %}Создать данные{% endif %}</a>
+{% endblock %}
